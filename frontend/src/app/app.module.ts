@@ -10,11 +10,13 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProductsComponent } from './products/products.component';
+import { BuyComponent } from './buy/buy.component';
 
 export const routes: Routes = [
   { path:'login',component:LoginComponent },
   { path:'register',component:RegisterComponent },
-  { path:'products',component:ProductsComponent }
+  { path:'products',component:ProductsComponent },
+  { path:'buy/:id',component:BuyComponent }
 ];
 
 @NgModule({
@@ -23,7 +25,8 @@ export const routes: Routes = [
     LoginComponent,
     RegisterComponent,
     NavbarComponent,
-    ProductsComponent
+    ProductsComponent,
+    BuyComponent
   ],
   imports: [
     BrowserModule,

@@ -12,19 +12,13 @@ export class ProductsComponent implements OnInit {
 
   constructor(private productService: ProductsService, private http: HttpClient) { }
 
+  // creating array of product type
   products: Array<Product> = [];
+  
   ngOnInit() {
-    //  this.products = this.productService.getProductsFromDb();
-    this.http.get<Array<Product>>("http://localhost:8081/VoizFonicaBackend/ProductServlet").subscribe(
-      (response) => {
-        this.products = response;
-        console.log(this.products);
-        return this.products;
-      },
-      (error) => {
-
-      }
-    );
+    //initializing this array with all the products available i.e basically 3 products only(pre, post, dongle)
+    this.products = this.productService.allProducts();
+    console.log(this.products);
   }
 
 }

@@ -1,13 +1,16 @@
 package com.iprimed.utility;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.iprimed.model.Customer;
 import com.iprimed.model.Product;
@@ -23,7 +26,7 @@ public class DbManager {
 	String userName = "niyaz";
 	String password = "niyaz@123";
 
-	//Model class
+	// Model class
 	Product product;
 
 	// for getting database connection
@@ -146,23 +149,75 @@ public class DbManager {
 		try {
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery("select * from product");
-			
-			//fetching all products from DB by calling .next()
+
+			// fetching all products from DB by calling .next()
 			while (resultSet.next()) {
 				product = new Product();
 				product.setProductId(resultSet.getInt(1));
 				product.setProductName(resultSet.getString(2));
 				product.setProductPrice(resultSet.getInt(3));
 				product.setProductDesc(resultSet.getString(4));
-				
-				//adding product object in to array list
+
+				// adding product object in to array list
 				productList.add(product);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//returning the the list which contains all the objects of product class
+		// returning the the list which contains all the objects of product class
 		return productList;
+	}
+
+	public List userPurchaseEntry(String email, int productId) {
+		
+		// creating list for returning
+		List list = new ArrayList();
+		connection = getConnection();
+		int i = 0;
+		try {
+			// purchase_increment.nextval -> sequence created in oracle DB for auto incrementing
+			preparedStatement = connection.prepareStatement(
+					"insert into customerpurchasedetails values(purchase_increment.nextval,?,?,?,?) ");
+
+			preparedStatement.setString(1, email);
+			preparedStatement.setInt(2, productId);
+			
+			//getting 10 digit sim/dongle number
+			long number = generate10DigitNumber();
+			preparedStatement.setLong(3,number);
+			
+			//getting current date
+			String date = getCurrentDate();
+			preparedStatement.setString(4, date);
+
+			i = preparedStatement.executeUpdate();
+			
+			// adding 10 digit number, date and i(return of executeUpdate) to the list
+			list.add(number);
+			list.add(i);
+			list.add(date);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// for generating 10 digit number
+	public long generate10DigitNumber() {
+		Random random = new Random();
+		char[] digits = new char[10];
+		digits[0] = '9';
+		for (int i = 1; i < digits.length; i++) {
+			digits[i] = (char) (random.nextInt(10) + '0');
+		}
+		return Long.parseLong(new String(digits));
+	}
+
+	// current date in yyyy-mm-dd format
+	public String getCurrentDate() {
+		java.util.Date date = new java.util.Date();
+		return (new SimpleDateFormat("yyyy/MM/dd").format(date));
 	}
 }

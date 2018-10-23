@@ -24,6 +24,8 @@ import com.iprimed.model.Customer;
 
 public class EmailManager {
 
+
+	//send welcome mail to newly register customer
 	public void sendWelcomeMail(Customer customer, String fileName) {
 		// SMTP info
 		String host = "smtp.gmail.com";
@@ -49,6 +51,34 @@ public class EmailManager {
 		}
 	}
 
+	//send invoice of product purchased by a particular customer
+	public void sendPurchaseInvoice(Customer customer, long number, String date, String productName, String fileName) {
+		// TODO Auto-generated method stub
+		// SMTP info
+				String host = "smtp.gmail.com";
+				String port = "587";
+				String mailFrom = "niyaz.demo@gmail.com";
+				String password = "niyazdemo@123";
+
+				// message info
+				String mailTo = customer.getEmail();
+				String subject = "VoizFonica -  Thank you " + customer.getFirstName() + " for purchasing "+productName ;
+				String message = "Your "+productName+" number is in the attachment";
+
+				// attachments
+				String attachment = fileName;
+				
+				try {
+					sendEmailWithAttachments(host, port, mailFrom, password, mailTo, subject, message, attachment);
+					System.out.println("Mail Sent");
+				} catch (MessagingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.out.println("Error in sending mail");
+				}
+	}
+
+	//utility method that sends mail with attachment 
 	public static void sendEmailWithAttachments(String host, String port, String mailFrom, String password,
 			String mailTo, String subject, String message, String attachment)
 			throws AddressException, MessagingException {
@@ -110,4 +140,5 @@ public class EmailManager {
 
 	}
 
+	
 }

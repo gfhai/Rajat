@@ -29,4 +29,22 @@ public class PdfManager {
 		}
 		return fileName;
 	}
+	
+	public String productPurchaseInvoicePdf(Customer customer,long number, String date, String productName) {
+		Document document  = new Document();
+		//path where pdf will be created and pdf name will be customer emailId with the sim/dongle number
+		String fileName = "D:\\Prodapt PDF\\Product Purchase\\" + customer.getEmail() +" "+number+".pdf";
+		
+		try {
+			PdfWriter.getInstance(document, new FileOutputStream(fileName));
+			document.open();
+			document.add(new Paragraph("Welcome "+customer.getFirstName()+"\n Your "+productName+" number is: "+number+"\n Purchase Date: "+date));
+			document.close();
+			System.out.println("PDF Created");
+		} catch (FileNotFoundException | DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fileName;
+	}
 }
