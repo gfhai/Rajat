@@ -1,7 +1,6 @@
 package com.iprimed.utility;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.iprimed.model.Customer;
+import com.iprimed.model.CustomerProduct;
 import com.iprimed.model.Product;
 
 public class DbManager {
@@ -28,6 +28,7 @@ public class DbManager {
 
 	// Model class
 	Product product;
+	CustomerProduct customerProduct;
 
 	// for getting database connection
 	public Connection getConnection() {
@@ -170,6 +171,7 @@ public class DbManager {
 	}
 
 	public List userPurchaseEntry(String email, int productId) {
+
 		
 		// creating list for returning
 		List list = new ArrayList();
@@ -204,6 +206,36 @@ public class DbManager {
 		return list;
 	}
 
+	
+	public List<CustomerProduct> getCustomerProducts(String email) {
+		// getting connection
+				connection = getConnection();
+				// instantiating list with ArrayList
+				List<CustomerProduct> customerProductList = new ArrayList<>();
+
+				try {
+					
+					preparedStatement = connection.prepareStatement("select * from customerpurchasedetails, product  where customerpurchasedetails.productid = product.productid and customeremail = ?");
+					preparedStatement.setString(1, email);
+					resultSet = preparedStatement.executeQuery();
+					// fetching all customer products from DB by calling .next()
+					while (resultSet.next()) {
+						customerProduct = new CustomerProduct();
+						customerProduct.setProductId(resultSet.getInt(3));
+						customerProduct.setDate(resultSet.getString(5));
+						customerProduct.setProductName(resultSet.getString("productname"));
+
+						// adding product object in to array list
+						customerProductList.add(customerProduct);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// returning the the list which contains all the objects of product class
+				return customerProductList;
+	}
+	
 	// for generating 10 digit number
 	public long generate10DigitNumber() {
 		Random random = new Random();
@@ -220,4 +252,6 @@ public class DbManager {
 		java.util.Date date = new java.util.Date();
 		return (new SimpleDateFormat("yyyy/MM/dd").format(date));
 	}
+
+	
 }
